@@ -55,14 +55,15 @@ export const deleteAdvertiseReq = ({
 export const postUploadImgReq = ({
   did,
   id,
-  img,
+  formData
 }: {
   did: number;
   id: number;
-  img: any;
+  formData: any;
 }) => {
   return request(`/shops/${did}/advertisement/${id}/uploadImg`, {
     method: 'post',
+    data: formData
   });
 };
 
@@ -115,14 +116,14 @@ export const putAuditAdvertiseReq = ({
 // 管理员查看某一个广告时间段的广告
 export const getAllSegmentsAdvertiseReq = ({
   did,
-  id,
+  tid,
   ...params
 }: {
   did: number;
-  id: number;
+  tid: number;
   params: any;
 }) => {
-  return request(`/shops/${did}/timesegments/${id}/advertisement`, {
+  return request(`/shops/${did}/timesegments/${tid}/advertisement`, {
     method: 'get',
     params: params,
   });
@@ -131,16 +132,16 @@ export const getAllSegmentsAdvertiseReq = ({
 // 管理员在广告时段下新建广告
 export const postCreateSegmentsAdvertiseReq = ({
   did,
-  id,
-  ...params
+  tid,
+  ...data
 }: {
   did: number;
-  id: number;
-  params: advertiseData;
+  tid: number;
+  data: advertiseData;
 }) => {
-  return request(`/shops/${did}/timesegments/${id}/advertisement`, {
+  return request(`/shops/${did}/timesegments/${tid}/advertisement`, {
     method: 'post',
-    params: params,
+    data: data,
   });
 };
 

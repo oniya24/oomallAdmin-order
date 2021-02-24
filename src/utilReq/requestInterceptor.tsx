@@ -5,6 +5,10 @@ export const addAuth2Header = (url: string, options: any) => {
     Accept: '*/*',
     authorization: auth_Token,
   };
+    // 如果是上传文件的话
+  if(url.indexOf('upload') != -1) { 
+    delete headers["Content-Type"]
+  }
   return {
     url,
     options: { ...options, headers },

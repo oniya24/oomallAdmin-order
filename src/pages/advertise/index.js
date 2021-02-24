@@ -7,41 +7,52 @@ import {
   Tooltip,
   Space,
   Form,
+  Drawer,
   DatePicker,
   Modal,
   Input,
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Advertise';
 import pagination from '@/utils/pagination';
+import moment from 'moment';
+import { advertiseStateMap } from '@/const/oomall';
 const advertise = ({
   adverList,
   adverTotal,
   adverPage,
   adverPageSize,
-  putDefaultAdvertise,
+  adverDetail,
   postUploadImg,
-  putOnshelvesAdvertise,
-  putOffshelvesAdvertise,
-  putAuditAdvertise,
   putModifyAdvertise,
   deleteAdvertise,
   getAllSegmentsAdvertise,
   postCreateSegmentsAdvertise,
+  putDefaultAdvertise,
+  putOnshelvesAdvertise,
+  putOffshelvesAdvertise,
+  putAuditAdvertise,
   savePagination,
+  saveAdverDetail
 }) => {
+  console.log(advertiseStateMap)
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
+  const [tid, setTid] = useState(2);
   const [modalState, setModalState] = useState(0); // 0是创建
   const [modalVisible, setModalVisible] = useState(false);
-  const [adverDetail, setAdverDetail] = useState(null);
-  const [adverDetailVisible, setAdverDetailVisible] = useState(false);
   const [form] = Form.useForm();
   const formRef = useRef();
   const handledeleteAdver = async ({ id }) => {
     await deleteAdvertise({
-      shopId: depart_id,
+      did: depart_id,
       id,
+    });
+    await getAllSegmentsAdvertise({
+      did: depart_id,
+      tid,
+      page: adverPage,
+      pageSize: adverPageSize
     });
   };
   const handleCreateAdver = () => {
@@ -52,44 +63,62 @@ const advertise = ({
     setModalState(1);
     setModalVisible(true);
     // 这里对time进行处理
-    // form.setFieldsValue(record)
+    let { beginDate, endDate } = record;
+    beginDate = moment(beginDate);
+    endDate = moment(endDate);
+    form.setFieldsValue({
+      ...record,
+      beginDate,
+      endDate
+    })
   };
   const handleAdverDetail = record => {
-    setAdverDetail(record);
-    setAdverDetailVisible(true);
+    saveAdverDetail(record);
+    history.push('/advertise/detail')
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then(value => {
-      // await postCreateSegmentsAdvertise(value)
+    form.validateFields().then(async (value) => {
+      let { beginDate, endDate } = value;
+      beginDate = beginDate.format("YYYY-MM-DD");
+      endDate = endDate.format("YYYY-MM-DD");
+      await postCreateSegmentsAdvertise({
+        did: depart_id,
+        tid,
+        ...value,
+        beginDate,
+        endDate
+      })
+      await getAllSegmentsAdvertise({
+        did: depart_id,
+        tid,
+        page: adverPage,
+        pageSize: adverPageSize
+      });
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
-    form.validateFields().then(value => {
-      // await putModifyAdvertise(value)
+    form.validateFields().then(async (value) => {
+      let { beginDate, endDate } = value;
+      beginDate = beginDate.format("YYYY-MM-DD");
+      endDate = endDate.format("YYYY-MM-DD");
+      await putModifyAdvertise({
+        did: depart_id,
+        ...value,
+        beginDate,
+        endDate
+      })
+      await getAllSegmentsAdvertise({
+        did: depart_id,
+        tid,
+        page: adverPage,
+        pageSize: adverPageSize
+      });
       setModalVisible(false);
     });
   };
   const onFormFinish = value => {
     // getAllSegmentsAdvertise
-  };
-  const handleSetDefault = () => {
-    // putDefaultAdvertise
-  };
-  const handleAudit = () => {
-    // putAuditAdvertise
-  };
-  const handleOnShelves = async ({ id }) => {
-    await putOnshelvesActivity({
-      shopId: depart_id,
-      id,
-    });
-  };
-  const handleOffShelves = async ({ id }) => {
-    await putOffshelvesActivity({
-      shopId: depart_id,
-      id,
-    });
   };
   const columns = useMemo(() => {
     return [
@@ -107,13 +136,18 @@ const advertise = ({
         title: '活动图片',
         dataIndex: 'imagePath',
         key: 'imagePath',
+        render: (text, record) => {
+          return (
+            <div><img style={{width: 50, height: 50}} src={text}></img></div>
+          )
+        }
       },
       {
         title: '状态',
         dataIndex: 'state',
         key: 'state',
         render: (text, record) => {
-          return <div>{text ? '正常' : '异常'}</div>;
+          return <div>{advertiseStateMap[text]}</div>;
         },
       },
       {
@@ -178,12 +212,12 @@ const advertise = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllSegmentsAdvertise({
-    //   shopId: depart_id,
-    //   page: adverPage,
-    //   pageSize: adverPageSize
-    // });
-    console.log('fetch new');
+    getAllSegmentsAdvertise({
+      did: depart_id,
+      tid,
+      page: adverPage,
+      pageSize: adverPageSize
+    });
   }, [adverPage, adverPageSize]);
   return (
     <Card>
@@ -202,16 +236,19 @@ const advertise = ({
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
+              <Button type="primary" onClick={handleCreateAdver}>
+                当前时段创建广告
+              </Button>
             </Space>
           </Form.Item>
         </Form>
       </Card>
       <Card>
-        <div style={{ margin: 10 }}>
+        {/* <div style={{ margin: 10 }}>
           <Button type="primary" onClick={handleCreateAdver}>
             当前时段创建广告
           </Button>
-        </div>
+        </div> */}
         <Table
           // onRow={(record) => {
           //   const { id } = record
@@ -280,27 +317,6 @@ const advertise = ({
             <DatePicker />
           </Form.Item>
         </Form>
-      </Modal>
-      <Modal
-        visible={adverDetailVisible}
-        title="广告状态"
-        onCancel={() => setAdverDetailVisible(false)}
-      >
-        <Space>
-          <span>活动状态</span>
-          <Button type="primary" onClick={handleAudit}>
-            审核通过
-          </Button>
-          <Button type="primary" onClick={handleSetDefault}>
-            设置为默认活动
-          </Button>
-          <Button type="primary" onClick={handleOnShelves}>
-            上架活动
-          </Button>
-          <Button type="primary" onClick={handleOffShelves}>
-            下架活动
-          </Button>
-        </Space>
       </Modal>
     </Card>
   );

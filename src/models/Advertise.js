@@ -39,6 +39,7 @@ const model = {
     adverTotal: 0,
     adverPage: 1,
     adverPageSize: 10,
+    adverDetail: {},
   },
   effects: {
     *putDefaultAdvertise({ payload }, { call, put }) {
@@ -74,15 +75,22 @@ const model = {
     *getAllSegmentsAdvertise({ payload }, { call, put }) {
       const res = yield call(getAllSegmentsAdvertiseReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        // const { data } = res;
+        // const { list, total } = data;
+        // yield put({
+        //   type: 'save',
+        //   payload: {
+        //     adverList: list,
+        //     adverTotal: total,
+        //   },
+        // });
         const { data } = res;
-        const { list, total } = data;
         yield put({
           type: 'save',
           payload: {
-            adverList: list,
-            adverTotal: total,
-          },
-        });
+            adverList: data
+          }
+        })
       }
     },
     *postCreateSegmentsAdvertise({ payload }, { call, put }) {
@@ -113,6 +121,14 @@ const model = {
         },
       });
     },
+    *saveAdverDetail({ payload }, { call, put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          adverDetail: payload
+        }
+      })
+    }
   },
   reducers: {
     save(state, action) {
