@@ -89,19 +89,19 @@ const model = {
       }
     },
     *putConfirmAftersales({ payload }, { call, put }) {
-      const res = yield call(getAftersalesByIdReq, payload);
+      const res = yield call(putConfirmAftersalesReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('确认订单');
       }
     },
     *putReceiveAftersales({ payload }, { call, put }) {
-      const res = yield call(getAftersalesByIdReq, payload);
+      const res = yield call(putReceiveAftersalesReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('确认收到退货');
       }
     },
     *putDeliverAftersales({ payload }, { call, put }) {
-      const res = yield call(getAftersalesByIdReq, payload);
+      const res = yield call(putDeliverAftersalesReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('提交运单号成功');
       }
