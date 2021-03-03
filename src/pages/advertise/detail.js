@@ -8,6 +8,7 @@ import {
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Advertise';
 import pagination from '@/utils/pagination';
+import { UploadOutlined } from '@ant-design/icons';
 const advertise = ({
   adverDetail,
   putDefaultAdvertise,
@@ -85,7 +86,7 @@ const advertise = ({
           beforeUpload={beforeUpload}
           multiple={false}
         >
-          {imageUrl ? <img src={imageUrl} alt="file" style={{ width: '100%' }} /> : uploadButton}
+          <Button icon={<UploadOutlined />}>选择图片</Button>
         </Upload>
         <Button type="primary" onClick={handleUploadImg}>上传文件</Button>
       </div>
