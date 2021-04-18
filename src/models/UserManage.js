@@ -2,6 +2,7 @@ import {
   getAllUsersReq,
   putBanUserByShopReq,
   putReleaseUserByShopReq,
+  getUserByIdReq
 } from '@/service/UserManage.tsx';
 import {
   defaultMapStateToProps,
@@ -20,6 +21,7 @@ const model = {
         name: 'string',
       },
     ],
+    userDetail: {},
     userTotal: 0,
     userPage: 1,
     userPageSize: 10,
@@ -37,6 +39,18 @@ const model = {
             userTotal: total,
           },
         });
+      }
+    },
+    *getUserById({ payload }, {call, put}){
+      const res = yield call(getUserByIdReq, payload)
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        const { data } = res
+        yield put({
+          type: 'save',
+          payload: {
+            userDetail: data
+          }
+        })
       }
     },
     *putBanUserByShop({ payload }, { call, put }) {

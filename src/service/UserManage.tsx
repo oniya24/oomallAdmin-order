@@ -12,6 +12,11 @@ export const getAllUsersReq = (params: getAllUsersParams) => {
   });
 };
 
+
+export const getUserByIdReq = (id:number) => {
+  return request(`/users/${id}`);
+};
+
 // 平台管理员封禁买家
 export const putBanUserByShopReq = ({
   did,

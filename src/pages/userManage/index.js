@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import { connect } from 'umi';
+import { connect, history } from 'umi';
 import { Card, Table, Button, Tooltip, Space } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/UserManage';
 import pagination from '@/utils/pagination';
@@ -10,8 +10,6 @@ const userManage_user = ({
   userPage,
   userPageSize,
   getAllUsers,
-  putBanUserByShop,
-  putReleaseUserByShop,
   savePagination,
 }) => {
   const { depart_id, userName, mobile } = JSON.parse(
@@ -24,13 +22,10 @@ const userManage_user = ({
     putReleaseUserByShop({ did: depart_id, id });
   };
   useEffect(() => {
-    // getAllUsers()
-  }, []);
-  useEffect(() => {
-    // getAllUsers({
-    //   page: userPage,
-    //   pagesize: userPageSize
-    // })
+    getAllUsers({
+      page: userPage,
+      pagesize: userPageSize
+    })
   }, [userPage, userPageSize]);
   const columns = useMemo(() => {
     return [
@@ -54,14 +49,10 @@ const userManage_user = ({
         dataIndex: 'operation',
         key: 'operation',
         render: (text, record) => {
+          const { id } = record
           return (
             <Space>
-              <Button type="danger" onClick={() => handleBanUser(record)}>
-                封禁用户
-              </Button>
-              <Button type="danger" onClick={() => handleReleaseUser(record)}>
-                解禁用户
-              </Button>
+              <Button type="primary" onClick={() => history.push(`userManage/${id}`)}>查看详情</Button>
             </Space>
           );
         },
@@ -69,7 +60,7 @@ const userManage_user = ({
     ];
   }, []);
   return (
-    <Card>
+    <Card style={{ height: "100%", width: "100%"}}>
       <Table
         scroll={{ x: true }}
         pagination={pagination(userTotal, savePagination)}
