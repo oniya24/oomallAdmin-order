@@ -10,7 +10,7 @@ export function render(oldRender: () => void) {
 
 export const request: RequestConfig = {
   timeout: 5000,
-  mode: 'cors',
+  mode: 'cors', 
   prefix: BASEURL,
   errorHandler,
   errorConfig: {
