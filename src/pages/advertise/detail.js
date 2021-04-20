@@ -79,7 +79,8 @@ const advertise = ({
     <Card style={{height: '100%', width: '100%'}}>
       <PageHeader  onBack={() => history.goBack()}
         subTitle="返回列表页"></PageHeader>
-      <div>
+      <div style={{ margin: 15, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <span style={{ margin: '0 10px' }}>广告图片上传: </span>
         <Upload
           name="file"
           id="file"
@@ -88,9 +89,10 @@ const advertise = ({
         >
           <Button icon={<UploadOutlined />}>选择图片</Button>
         </Upload>
-        <Button type="primary" onClick={handleUploadImg}>上传文件</Button>
+        <Button style={{ marginLeft: 10 }} type="primary" onClick={handleUploadImg}>上传文件</Button>
       </div>
-      <div>
+      <div style={{ margin: 15, display: 'flex', flexDirection: 'row' }}>
+        <span style={{ margin: '0 10px' }}>广告状态设置: </span>
         {
           Number(state) === 1 ? (
             <Button type="primary" size="small" onClick={handleAudit}>
@@ -112,11 +114,12 @@ const advertise = ({
             </Button>
           ) : null
         }
-        <div>
-          <Button type="primary" size="small"  onClick={handleSetDefault}>
-            设置为默认广告
-          </Button>
-        </div>
+      </div>
+      <div style={{ margin: 15, display: 'flex', flexDirection: 'row' }}>
+        <span style={{ margin: '0 10px' }}>是否设置为默认广告: </span>
+        <Button type="primary" size="small"  onClick={handleSetDefault}>
+          设置为默认广告
+        </Button>
       </div>
     </Card>
   );
