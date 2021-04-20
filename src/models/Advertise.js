@@ -75,22 +75,15 @@ const model = {
     *getAllSegmentsAdvertise({ payload }, { call, put }) {
       const res = yield call(getAllSegmentsAdvertiseReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
-        // const { data } = res;
-        // const { list, total } = data;
-        // yield put({
-        //   type: 'save',
-        //   payload: {
-        //     adverList: list,
-        //     adverTotal: total,
-        //   },
-        // });
         const { data } = res;
+        const { list, total } = data;
         yield put({
           type: 'save',
           payload: {
-            adverList: data
-          }
-        })
+            adverList: list,
+            adverTotal: total,
+          },
+        });
       }
     },
     *postCreateSegmentsAdvertise({ payload }, { call, put }) {

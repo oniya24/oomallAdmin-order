@@ -34,7 +34,7 @@ const advertise = ({
   savePagination,
   saveAdverDetail
 }) => {
-  console.log(advertiseStateMap)
+  console.log(advertiseStateMap, adverList)
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
